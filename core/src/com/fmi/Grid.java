@@ -16,8 +16,8 @@ public class Grid {
 	private static final int DEFAULT_PIXEL_SIZE = 8;
 	private static final int WIN_W = Gdx.graphics.getWidth();
 	private static final int WIN_H = Gdx.graphics.getHeight();
-	private static final Color DEFAULT_COLOR = Color.CORAL;
-	private static final Color GRID_COLOR = Color.CYAN;
+	private static final Color DEFAULT_COLOR = Color.BLACK;
+	private static final Color GRID_COLOR = Color.BLACK;
 
 	private boolean showGrid = true;
 	private int pixelSize;
@@ -52,6 +52,10 @@ public class Grid {
 
 	public int getPixelSize() {
 		return this.pixelSize;
+	}
+
+	public void reset() {
+		genGrid();
 	}
 
 	public void draw() {
@@ -99,7 +103,8 @@ public class Grid {
 			Color c = pixel.color;
 			c.a = pixel.alpha;
 			render.setColor(c);
-			render.rect(pixel.x, pixel.y, pixel.width, pixel.height);
+			render.circle(pixel.x + pixel.width / 2, pixel.y + pixel.width / 2, pixel.width / 2);
+			// render.rect(pixel.x, pixel.y, pixel.width, pixel.height);
 			render.flush();
 		}
 		render.end();
@@ -108,13 +113,15 @@ public class Grid {
 	private void drawGrid() {
 		render.begin(ShapeType.Line);
 		render.setColor(GRID_COLOR);
-		for (int i = 0; i < WIN_H; i += pixelSize) {
-			int x = (int) (i - WIN_H / 2);
+		int wCount = WIN_W / pixelSize;
+		int hCount = WIN_H / pixelSize;
+		for (int i = -wCount / 2; i <= wCount / 2; i++) {
+			float x = i * pixelSize;
 			render.line(x, -WIN_H / 2, x, WIN_H);
 		}
-		for (int i = 0; i < WIN_W; i += pixelSize) {
-			int y = (int) (WIN_W / 2 - i);
-			render.line(-WIN_W / 2, y, WIN_W / 2, y);
+		for (int i = -hCount / 2; i <= hCount / 2; i++) {
+			float x = i * pixelSize;
+			render.line(-WIN_W / 2, x, WIN_W / 2, x);
 		}
 
 		render.end();

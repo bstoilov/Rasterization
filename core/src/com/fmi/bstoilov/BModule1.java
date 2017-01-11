@@ -1,14 +1,19 @@
-package com.fmi.modules;
+package com.fmi.bstoilov;
+
+import java.util.Random;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.fmi.modules.AbstractModule;
 
 public class BModule1 extends AbstractModule {
-
+	private Random rand = new Random();
 	private Vector2 start = null;
 	private Vector2 end = null;
 	private boolean twoWayDraw = true;
 	private float delay = 1;
+	private Color color = Color.BLACK;
 
 	public BModule1(Camera cam) {
 		super(cam);
@@ -18,6 +23,7 @@ public class BModule1 extends AbstractModule {
 	public void handleClick(float x, float y) {
 		if (start == null) {
 			start = new Vector2(x, y);
+			color = getRandColor();
 			putPixel((int) x, (int) y, true);
 			delay = 0;
 		} else {
@@ -28,6 +34,7 @@ public class BModule1 extends AbstractModule {
 			plotLineWidth(start.x, start.y, midPoint.x, midPoint.y, 5f, false);
 			plotLineWidth(midPoint.x, midPoint.y, end.x, end.y, 5f, twoWayDraw);
 			delay = 0;
+			color = getRandColor();
 		}
 	}
 
@@ -72,11 +79,18 @@ public class BModule1 extends AbstractModule {
 	}
 
 	private void putPixel(int x, int y, boolean decr) {
-		grid.putPixel(x, y, delay);
+		grid.putPixel(x, y, delay, color);
 		if (decr) {
 			delay -= 0.1f;
 		} else {
 			delay += 0.1f;
 		}
+	}
+
+	private Color getRandColor() {
+		float r = rand.nextFloat();
+		float g = rand.nextFloat();
+		float b = rand.nextFloat();
+		return new Color(r, g, b, 1);
 	}
 }

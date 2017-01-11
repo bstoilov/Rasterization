@@ -18,7 +18,11 @@ public class Module1 extends AbstractModule {
 			start = new Vector2(x, y);
 		} else {
 			end = new Vector2(x, y);
-			plotLine(start.x, start.y, end.x, end.y);
+			float nx = Math.min(start.x, end.x) + Math.abs((start.x - end.x) / 2f);
+			float ny = Math.min(start.y, end.y) + Math.abs((start.y - end.y) / 2f);
+			Vector2 midPoint = new Vector2(nx, ny);
+			plotLine(start.x, start.y, midPoint.x, midPoint.y);
+			plotLine(end.x, end.y, midPoint.x, midPoint.y);
 		}
 	}
 
@@ -33,7 +37,6 @@ public class Module1 extends AbstractModule {
 	}
 
 	private void plotLine(int x0, int y0, int x1, int y1) {
-		System.out.println(delayStep);
 		int dx = Math.abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
 		int dy = -Math.abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
 		int err = dx + dy, e2;
