@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.fmi.bstoilov.BModule5;
 import com.fmi.modules.Module;
-import com.fmi.modules.Module1;
 
 public class PcGraphics extends ApplicationAdapter {
 	Camera cam;
@@ -17,7 +17,7 @@ public class PcGraphics extends ApplicationAdapter {
 	@Override
 	public void create() {
 		cam = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		module = new Module1(cam);
+		module = new BModule5(cam);
 	}
 
 	@Override

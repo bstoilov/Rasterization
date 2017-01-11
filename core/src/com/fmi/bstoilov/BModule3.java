@@ -79,10 +79,10 @@ public class BModule3 extends AbstractModule {
 
 	private boolean leftOfLine(Pixel p) {
 		for (Pixel pixel : linePixels) {
-			if (rect.contains(pixel.x, pixel.y)) {
-				if (p.y == pixel.y && p.x >= pixel.x) {
-					return false;
-				}
+			if (p.y == pixel.y && p.x >= pixel.x) {
+				return false;
+			} else if (p.y > pixel.y && p.x >= pixel.x) {
+				return false;
 			}
 		}
 		return true;
