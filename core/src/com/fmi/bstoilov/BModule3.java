@@ -7,17 +7,17 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.fmi.Pixel;
-import com.fmi.modules.AbstractModule;
+import com.fmi.Pixel2;
+import com.fmi.modules.AbstractModule2;
 
-public class BModule3 extends AbstractModule {
+public class BModule3 extends AbstractModule2 {
 
 	private boolean rectDrawn = false;
 	private boolean lineDrawn = false;
 	private Vector2 start = null;
 	private Vector2 end = null;
-	private List<Pixel> rectPixels = new ArrayList<Pixel>();
-	private List<Pixel> linePixels = new ArrayList<Pixel>();
+	private List<Pixel2> rectPixels = new ArrayList<Pixel2>();
+	private List<Pixel2> linePixels = new ArrayList<Pixel2>();
 	Rectangle rect;
 	Rectangle line;
 
@@ -49,12 +49,12 @@ public class BModule3 extends AbstractModule {
 		end = null;
 		lineDrawn = false;
 		rectDrawn = false;
-		rectPixels = new ArrayList<Pixel>();
-		linePixels = new ArrayList<Pixel>();
+		rectPixels = new ArrayList<Pixel2>();
+		linePixels = new ArrayList<Pixel2>();
 	}
 
 	private void cut() {
-		for (Pixel p : grid.getAllPixels()) {
+		for (Pixel2 p : grid.getAllPixels()) {
 			if (rect.contains(p.x, p.y)) {
 				if (!leftOfLine(p)) {
 					p.on = true;
@@ -66,19 +66,19 @@ public class BModule3 extends AbstractModule {
 			}
 
 		}
-		for (Pixel p : linePixels) {
+		for (Pixel2 p : linePixels) {
 			if (rect.contains(p.x, p.y)) {
 				p.color = Color.GREEN;
 			}
 		}
-		for (Pixel p : rectPixels) {
+		for (Pixel2 p : rectPixels) {
 			p.color = Color.BLACK;
 		}
 
 	}
 
-	private boolean leftOfLine(Pixel p) {
-		for (Pixel pixel : linePixels) {
+	private boolean leftOfLine(Pixel2 p) {
+		for (Pixel2 pixel : linePixels) {
 			if (p.y == pixel.y && p.x >= pixel.x) {
 				return false;
 			} else if (p.y > pixel.y && p.x >= pixel.x) {

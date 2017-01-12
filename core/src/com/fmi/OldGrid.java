@@ -2,7 +2,6 @@ package com.fmi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +11,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
-public class Grid {
+public class OldGrid {
 
 	private static final int DEFAULT_PIXEL_SIZE = 8;
 	private static final int WIN_W = Gdx.graphics.getWidth();
@@ -20,14 +19,13 @@ public class Grid {
 	private static final Color DEFAULT_COLOR = Color.BLACK;
 	private static final Color GRID_COLOR = Color.BLACK;
 
-	private boolean showGrid = false;
+	private boolean showGrid = true;
 	private int pixelSize;
-	private Map<String, Pixel> pixelMap;
+	private Map<String, Pixel2> pixelMap;
 	private final ShapeRenderer render;
 	private final Camera cam;
-	private List<PixelTask> tasks = new ArrayList<>();
 
-	public Grid(Camera cam) {
+	public OldGrid(Camera cam) {
 		this.cam = cam;
 		render = new ShapeRenderer();
 		pixelSize = DEFAULT_PIXEL_SIZE;
@@ -35,14 +33,14 @@ public class Grid {
 	}
 
 	private void genGrid() {
-		pixelMap = new HashMap<String, Pixel>();
+		pixelMap = new HashMap<String, Pixel2>();
 		int wCount = WIN_W / pixelSize;
 		int hCount = WIN_H / pixelSize;
 		for (int i = -wCount / 2; i < wCount / 2; i++) {
 			for (int j = -hCount / 2; j < hCount / 2; j++) {
 				float x = i * pixelSize;
 				float y = j * pixelSize;
-				Pixel pixel = new Pixel(x, y, pixelSize, pixelSize);
+				Pixel2 pixel = new Pixel2(x, y, pixelSize, pixelSize);
 				pixelMap.put(getIndex(i, j), pixel);
 			}
 		}
@@ -62,36 +60,23 @@ public class Grid {
 
 	public void draw() {
 		render.setProjectionMatrix(cam.combined);
-		Iterator<PixelTask> iter = tasks.iterator();
-		while (iter.hasNext()) {
-			PixelTask pt = iter.next();
-			if (pt.delay >= 0) {
-				pt.delay--;
-			} else {
-				Pixel pixel = getPixel((int) pt.x, (int) pt.y);
-				if (pixel != null) {
-					pixel.on = true;
-					pixel.color = pt.c;
-				}
-				iter.remove();
-			}
-		}
-
 		if (showGrid) {
 			drawGrid();
 		}
-		render.begin(ShapeType.Filled);
+
 		for (String key : pixelMap.keySet()) {
-			Pixel pixel = pixelMap.get(key);
-			if (pixel.on) {
-				Color c = pixel.color;
-				render.setColor(c);
-				// render.circle(pixel.x + pixel.width / 2, pixel.y +
-				// pixel.width / 2, pixel.width / 2);
-				render.rect(pixel.x, pixel.y, pixel.width, pixel.height);
+			Pixel2 pixel = pixelMap.get(key);
+			if (!pixel.on || pixel.on && pixel.delay > 0) {
+				render.begin(ShapeType.Line);
+				drawPixel(render, pixel);
+			} else {
+				render.begin(ShapeType.Filled);
+				drawPixel(render, pixel);
+			}
+			if (pixel.delay > 0) {
+				pixel.delay--;
 			}
 		}
-		render.end();
 
 	}
 
@@ -113,6 +98,18 @@ public class Grid {
 		}
 	}
 
+	private void drawPixel(ShapeRenderer render, Pixel2 pixel) {
+		if (pixel.on && pixel.delay <= 0) {
+			Color c = pixel.color;
+			c.a = pixel.alpha;
+			render.setColor(c);
+			render.circle(pixel.x + pixel.width / 2, pixel.y + pixel.width / 2, pixel.width / 2);
+			// render.rect(pixel.x, pixel.y, pixel.width, pixel.height);
+			render.flush();
+		}
+		render.end();
+	}
+
 	private void drawGrid() {
 		render.begin(ShapeType.Line);
 		render.setColor(GRID_COLOR);
@@ -130,8 +127,8 @@ public class Grid {
 		render.end();
 	}
 
-	public List<Pixel> getAllPixels() {
-		List<Pixel> pixels = new ArrayList<Pixel>();
+	public List<Pixel2> getAllPixels() {
+		List<Pixel2> pixels = new ArrayList<Pixel2>();
 		for (String k : pixelMap.keySet()) {
 			pixels.add(pixelMap.get(k));
 		}
@@ -147,25 +144,17 @@ public class Grid {
 	}
 
 	public boolean putPixel(float x, float y, float delay, Color c) {
-
-		PixelTask pt = new PixelTask(x, y);
-		pt.c = c;
-		pt.delay = delay;
-		tasks.add(pt);
-
-		return true;
+		Pixel2 pixel = getPixel((int) x, (int) y);
+		if (pixel != null && !pixel.on) {
+			pixel.on = true;
+			pixel.delay = delay;
+			pixel.color = c;
+			return true;
+		}
+		return false;
 	}
 
-	public boolean putPixel2(float x, float y, float delay, Color c) {
-		PixelTask pt = new PixelTask(x - 1, y + getPixelSize() / 2);
-		pt.c = c;
-		pt.delay = delay;
-		tasks.add(pt);
-
-		return true;
-	}
-
-	public Pixel getPixel(int x, int y) {
+	public Pixel2 getPixel(int x, int y) {
 		int nx = (int) (x / pixelSize);
 		int ny = (int) (y / pixelSize);
 		if (x < 0) {
@@ -175,16 +164,5 @@ public class Grid {
 			ny--;
 		}
 		return pixelMap.get(getIndex(nx, ny));
-	}
-
-	private class PixelTask {
-		public final float x, y;
-		public Color c;
-		public float delay = 0;
-
-		public PixelTask(float x, float y) {
-			this.x = x;
-			this.y = y;
-		}
 	}
 }

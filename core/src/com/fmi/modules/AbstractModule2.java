@@ -4,15 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
-import com.fmi.Grid;
+import com.fmi.OldGrid;
 
-public abstract class AbstractModule implements Module {
-	protected final Grid grid;
+public abstract class AbstractModule2 implements Module {
+	protected OldGrid grid;
 	protected float delayStep = 1f;
 
-	protected AbstractModule(Camera cam) {
-		grid = new Grid(cam);
-		InputProcessor inputProcessor = new InputHandler(grid, this);
+	protected AbstractModule2(Camera cam) {
+		grid = new OldGrid(cam);
+		InputProcessor inputProcessor = new InputHandler2(grid, this);
 		Gdx.input.setInputProcessor(inputProcessor);
 	}
 
@@ -43,12 +43,12 @@ public abstract class AbstractModule implements Module {
 
 	public abstract void reset();
 
-	private class InputHandler implements InputProcessor {
+	private class InputHandler2 implements InputProcessor {
 
-		private final Grid grid;
-		private final AbstractModule module;
+		private final OldGrid grid;
+		private final AbstractModule2 module;
 
-		public InputHandler(Grid grid, AbstractModule module) {
+		public InputHandler2(OldGrid grid, AbstractModule2 module) {
 			this.grid = grid;
 			this.module = module;
 		}
@@ -63,9 +63,11 @@ public abstract class AbstractModule implements Module {
 			switch (keycode) {
 			case Keys.UP:
 				grid.incrPixelSize();
+				grid.reset();
 				break;
 			case Keys.DOWN:
 				grid.decrPixelSize();
+				grid.reset();
 				break;
 			case Keys.G:
 				grid.toggleGrid();

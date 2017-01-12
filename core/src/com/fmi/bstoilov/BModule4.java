@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.fmi.Pixel;
-import com.fmi.modules.AbstractModule;
+import com.fmi.Pixel2;
+import com.fmi.modules.AbstractModule2;
 
-public class BModule4 extends AbstractModule {
+public class BModule4 extends AbstractModule2 {
 	Random rand = new Random();
-	private List<Pixel> borderValues = new ArrayList<Pixel>();
+	private List<Pixel2> borderValues = new ArrayList<Pixel2>();
 	boolean startFlag = false;
 
 	public BModule4(Camera cam) {
@@ -56,7 +56,7 @@ public class BModule4 extends AbstractModule {
 
 	public void simpleFloodFill(int x, int y, float delay) {
 
-		Pixel p = grid.getPixel(x, y);
+		Pixel2 p = grid.getPixel(x, y);
 
 		delay += 1;
 		if (p == null || borderValues.contains(p) || p.on) {
@@ -78,8 +78,9 @@ public class BModule4 extends AbstractModule {
 	}
 
 	private void getOnPixels() {
-		List<Pixel> pixels = grid.getAllPixels();
+		List<Pixel2> pixels = grid.getAllPixels();
 		borderValues = pixels.stream().filter(pixel -> pixel.on).collect(Collectors.toList());
+		System.out.println(borderValues.size());
 	}
 
 }

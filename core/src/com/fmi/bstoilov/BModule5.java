@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.fmi.Pixel;
-import com.fmi.modules.AbstractModule;
+import com.fmi.Pixel2;
+import com.fmi.modules.AbstractModule2;
 
-public class BModule5 extends AbstractModule {
+public class BModule5 extends AbstractModule2 {
 	private static final float AP = 0.5f;
 	private List<Vector2> points = new ArrayList<Vector2>();
 	private boolean showInitialPoints = true;
@@ -33,20 +34,20 @@ public class BModule5 extends AbstractModule {
 		for (int i = 0; i < result.length; i++) {
 			result[i] = points.get(i);
 		}
-		Pixel[] breizerPixels = bezier(result);
-		Pixel[] regularPixels = getRegular(result);
+		Pixel2[] breizerPixels = bezier(result);
+		Pixel2[] regularPixels = getRegular(result);
 		drawPoints(breizerPixels, Color.RED);
 		drawPoints(regularPixels, Color.GREEN);
 		points = new ArrayList<Vector2>();
 	}
 
-	public Pixel[] bezier(Vector2[] points) {
+	public Pixel2[] bezier(Vector2[] points) {
 		int n = points.length;
 		if (n < 3) {
 			// Cannot create bezier with less than 3 points
 			return null;
 		}
-		Pixel[] bPoints = new Pixel[2 * (n - 2)];
+		Pixel2[] bPoints = new Pixel2[2 * (n - 2)];
 		double paX, paY;
 		double pbX = points[0].x;
 		double pbY = points[0].y;
@@ -74,7 +75,7 @@ public class BModule5 extends AbstractModule {
 
 			double p1X = pbX - AP * apX;
 			double p1Y = pbY - AP * apY;
-			bPoints[2 * i] = new Pixel((int) p1X, (int) p1Y, grid.getPixelSize(), grid.getPixelSize());
+			bPoints[2 * i] = new Pixel2((int) p1X, (int) p1Y, grid.getPixelSize(), grid.getPixelSize());
 
 			acX = -acX;
 			acY = -acY;
@@ -87,7 +88,7 @@ public class BModule5 extends AbstractModule {
 
 			double p2X = pbX - AP * apX;
 			double p2Y = pbY - AP * apY;
-			bPoints[2 * i + 1] = new Pixel((int) p2X, (int) p2Y, grid.getPixelSize(), grid.getPixelSize());
+			bPoints[2 * i + 1] = new Pixel2((int) p2X, (int) p2Y, grid.getPixelSize(), grid.getPixelSize());
 		}
 		return bPoints;
 	}
@@ -96,10 +97,10 @@ public class BModule5 extends AbstractModule {
 		plotLine((int) x0, (int) y0, (int) x1, (int) y1, c);
 	}
 
-	private Pixel[] getRegular(Vector2[] points) {
-		Pixel[] pixels = new Pixel[points.length];
+	private Pixel2[] getRegular(Vector2[] points) {
+		Pixel2[] pixels = new Pixel2[points.length];
 		for (int i = 0; i < points.length; i++) {
-			pixels[i] = new Pixel(points[i].x, points[i].y, grid.getPixelSize(), grid.getPixelSize());
+			pixels[i] = new Pixel2(points[i].x, points[i].y, grid.getPixelSize(), grid.getPixelSize());
 		}
 		return pixels;
 	}
@@ -126,7 +127,7 @@ public class BModule5 extends AbstractModule {
 		}
 	}
 
-	private void drawPoints(Pixel[] pixels, Color c) {
+	private void drawPoints(Pixel2[] pixels, Color c) {
 		if (pixels == null) {
 			System.out.println("No points");
 			return;
@@ -135,7 +136,7 @@ public class BModule5 extends AbstractModule {
 		for (int i = 1; i < pixels.length; i++) {
 			plotLine(pixels[i - 1].x, pixels[i - 1].y, pixels[i].x, pixels[i].y, c);
 		}
-		for (Pixel p : pixels) {
+		for (Pixel2 p : pixels) {
 			grid.putPixel(p.x, p.y, 1, c);
 		}
 		plotLine(pixels[pixels.length - 1].x, pixels[pixels.length - 1].y, points.get(points.size() - 1).x,
